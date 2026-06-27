@@ -1,27 +1,37 @@
 import { useState } from "react";
+const Statistics = ({ good, bad, neutral }) => {
+  if (good + bad + neutral === 0) {
+    return <p>No feedback given</p>
+  }
+    return (
+      <>
+        <h1>Statistics</h1>
+        <Display review="good" count={good} />
+        <Display review="neutral" count={neutral} />
+        <Display review="bad" count={bad} />
+        <Total good={good} bad={bad} neutral={neutral} />
+        <Average good={good} bad={bad} neutral={neutral} />
+        <Percentage good={good} bad={bad} neutral={neutral} />
+      </>
+    );
+}
 const Display = ({ review, count }) => (
   <p>
     {review}:{count}
   </p>
 );
-const Total = ({total}) => {
+const Total = ({ good, bad, neutral}) => {
+  const total= good+bad+neutral
   return <p>total feedbacks collected are :  { total}</p>
 }
 const Average = ({ good, bad, neutral }) => {
   const total = good + bad + neutral;
 
   const totalScore = good - bad
-  if (total === 0) {
-    return <p>Average score is 0</p>
-  }
-  
   return <p>Average score is { totalScore/(total)}</p>
 }
 const Percentage = ({ good, bad, neutral }) => {
   const total = good + bad + neutral
-  if (total === 0) {
-    return <p>Percentage of positive review is 0%</p>;
-  }
   return <p>Percentage of positive feedbacks are : {(good/total)*100}%</p>
 }
 const Button = ({onClick, text}) => {
@@ -35,6 +45,7 @@ const App = () => {
 
   return (
     <div>
+      <h1>Give Feedback</h1>
       <Button
         onClick={() => {
           setGood(good + 1);
@@ -53,12 +64,7 @@ const App = () => {
         }}
         text="Bad"
       />
-      <Display review="good" count={good} />
-      <Display review="neutral" count={neutral} />
-      <Display review="bad" count={bad} />
-      <Total total={good + bad + neutral} />
-      <Average good={good} bad={bad} neutral={neutral} />
-      <Percentage good={good} bad={bad} neutral={neutral}/>
+      <Statistics good={good} bad={bad} neutral={neutral} />
     </div>
   );
 };
