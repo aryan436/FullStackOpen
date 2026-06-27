@@ -1,6 +1,13 @@
 import { useState } from "react";
 const Button = ({ onClick, text }) => {
-  return <button onClick={onClick}>{ text}</button>
+  return <button onClick={onClick}>{text}</button>;
+};
+const Display = ({ anecdote, votes }) => {
+  return<>
+      <div>{anecdote}</div>
+      <div>has {votes} votes</div>
+  </>
+  
 }
 const App = () => {
   const anecdotes = [
@@ -13,23 +20,36 @@ const App = () => {
     "Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.",
     "The only way to go fast, is to go well.",
   ];
-  const [votes, setVotes] = useState(()=>Array(anecdotes.length).fill(0))
+  const [votes, setVotes] = useState(() => Array(anecdotes.length).fill(0));
   const [selected, setSelected] = useState(0);
+  const [max, setMax] = useState(0);
   const handleNext = () => {
-    const index = Math.floor(Math.random() * anecdotes.length)
-    setSelected(index)
-  }
+    const index = Math.floor(Math.random() * anecdotes.length);
+    setSelected(index);
+  };
+  const findMax = (votes) => {
+    let maxIndex = 0;
+    for (let i = 0; i < votes.length; i++) {
+      if (votes[i] > votes[maxIndex]) {
+        maxIndex = i;
+      }
+    }
+    return maxIndex;
+  };
   const handleVote = () => {
-    const copy = [...votes]
+    const copy = [...votes];
     copy[selected]++;
     setVotes(copy);
-  }
+    setMax(findMax(copy));
+  };
   return (
     <>
-      <div>{anecdotes[selected]}</div>
-      <div>has {votes[selected]  } votes</div>
+      <h1>Anecdote of the day</h1>
+      <Display anecdote={anecdotes[selected]} votes={votes[selected]} />
       <Button onClick={handleVote} text="vote" />
       <Button onClick={handleNext} text="next anecdote" />
+      <h1>Anecdote with the most votes</h1>
+      <Display anecdote={anecdotes[max]} votes={votes[max]}/>
     </>
   );
 };
