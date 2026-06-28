@@ -5,11 +5,16 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const handleAdd = (event) => {
     event.preventDefault();
+    const exists = persons.some((person) => person.name === newName)
+    if (exists) {
+      alert(`${newName} is already added to phonebook`);
+      return;
+    }
     const newPerson = {
       name: newName,
     };
-
     setPersons(persons.concat(newPerson));
+    setNewName("")
   };
   const handleNewName = (event) => {
     setNewName(event.target.value);
@@ -28,7 +33,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       {persons.map((person) => {
-        return <p key={persons.name}>{person.name}</p>;
+        return <p key={person.name}>{person.name}</p>;
       })}
     </div>
   );
