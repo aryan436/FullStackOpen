@@ -1,100 +1,41 @@
-import { useState } from "react";
-import Input from "./components/Input";
-import PersonForm from "./components/PersonForm";
-import Persons from "./components/Persons";
-import { useEffect } from "react";
-import personsService from "./services/persons";
-import Notification from "./components/Notification";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 const App = () => {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newPhone, setNewPhone] = useState("");
-  const [filter, setFilter] = useState("");
-  const [message, setMessage] = useState(null);
+  const [value, setValue] = useState("");
+  const [rates, setRates] = useState({});
+  const [currency, setCurrency] = useState(null);
 
   useEffect(() => {
-    personsService.getAll().then(initialPersons => {
-      setPersons(initialPersons);
-    })
-  },[])
-  const handleAdd = (event) => {
-    event.preventDefault();
-    const newPerson = {
-      name: newName,
-      number: newPhone,
-    };
-    const existingPerson = persons.find((person) => person.name === newName)
-    if (existingPerson) {
-      if (window.confirm(`${existingPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
-        personsService
-          .updatePerson(existingPerson.id, newPerson)
-          .then((returnedPerson) => {
-            setPersons(
-              persons.map((person) =>
-                person.id === existingPerson.id ? returnedPerson : person,
-              ),
-            );
-            setNewName('')
-            setNewPhone('')
-            setMessage(`Changed ${existingPerson.name}'s number`)
-            setTimeout(() => {
-              setMessage(null);
+    console.log("effect run, currency is now", currency);
 
-            },5000);
-          });
-      }
-      return
+    // skip if currency is not defined
+    if (currency) {
+      console.log("fetching exchange rates...");
+      axios
+        .get(`https://open.er-api.com/v6/latest/${currency}`)
+        .then((response) => {
+          setRates(response.data.rates);
+        });
     }
-    personsService.create(newPerson).then(returnedPerson => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName("")
-      setNewPhone("")
-      setMessage(`Added ${newPerson.name}`);
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
-    })
+  }, [currency]);
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
   };
-  const handleNewName = (event) => {
-    setNewName(event.target.value);
+
+  const onSearch = (event) => {
+    event.preventDefault();
+    setCurrency(value);
   };
-  const handleNewPhone = (event) => {
-    setNewPhone(event.target.value);
-  }
-  const personsToShow = persons.filter((person) =>
-    person.name.toLowerCase().includes(filter.toLowerCase()),
-  );
-  const handleFilter = (event) => {
-    setFilter(event.target.value)
-  }
-  const handleDelete = (id) => {
-    if (window.confirm(`Delete ${persons.find(person=>person.id===id).name}?`)) {
-      personsService.deletePerson(id).then(() => {
-        setPersons(
-          persons.filter(person => person.id !== id)
-        );
-      });
-    }
-  }
+
   return (
     <div>
-      <h2>Phonebook</h2>
-      <Notification message={message} />
-      <Input
-        text={"filter shown with"}
-        onChange={handleFilter}
-        value={filter}
-      />
-      <h2>add a new</h2>
-      <PersonForm
-        handleAdd={handleAdd}
-        handleNewName={handleNewName}
-        newName={newName}
-        newPhone={newPhone}
-        handleNewPhone={handleNewPhone}
-      />
-      <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} handleDelete={handleDelete} />
+      <form onSubmit={onSearch}>
+        currency: <input value={value} onChange={handleChange} />
+        <button type="submit">exchange rate</button>
+      </form>
+      <pre>{JSON.stringify(rates, null, 2)}</pre>
     </div>
   );
 };

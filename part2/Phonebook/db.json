@@ -1,16 +1,6 @@
 {
   "persons": [
     {
-      "name": "Aryan",
-      "number": "6564654564",
-      "id": "8O40i-2OTXY"
-    },
-    {
-      "name": "Aryan Tomar",
-      "number": "989898999",
-      "id": "1Yey47uYK4E"
-    },
-    {
       "name": "kaise ho",
       "number": "45454564654",
       "id": "nO1haun1_f8"
@@ -19,6 +9,16 @@
       "name": "hvhh",
       "number": "654454",
       "id": "BQGPL8Kzd_8"
+    },
+    {
+      "name": "Aryan Tomar",
+      "number": "644646464",
+      "id": "Qg7K_iidb4U"
+    },
+    {
+      "name": "Aryan Singh",
+      "number": "6545456465",
+      "id": "jvhXdbZttuY"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
