@@ -1,8 +1,9 @@
-const Person = ({ person }) => {
-    return (
-      <p>
-        {person.name} {person.number}
-      </p>
-    );
-}
-export default Person
+const Person = ({ person, handleDelete }) => {
+  console.log(person,handleDelete)
+  return (
+    <p>
+      {person.name} {person.number} <button onClick={()=>handleDelete(person.id)}>delete</button>
+    </p>
+  );
+};
+export default Person;

@@ -3,18 +3,16 @@ import Input from "./components/Input";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import { useEffect } from "react";
-import axios from 'axios'
+import personsService from "./services/persons";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [filter, setFilter] = useState("");
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => {
-        setPersons(response.data)
-      })
+    personsService.getAll().then(initialPersons => {
+      setPersons(initialPersons);
+    })
   },[])
   const handleAdd = (event) => {
     event.preventDefault();
@@ -27,9 +25,9 @@ const App = () => {
       name: newName,
       number: newPhone,
     };
-    axios.post("http://localhost:3001/persons", newPerson).then((response) => {
-      console.log(response.data);
-      setPersons(persons.concat(response.data));
+    personsService.create(newPerson).then(returnedPerson => {
+      console.log(returnedPerson);
+      setPersons(persons.concat(returnedPerson));
       setNewName("")
       setNewPhone("")
     })
@@ -49,6 +47,11 @@ const App = () => {
     console.log(event.target.value)
     setFilter(event.target.value)
   }
+  const handleDelete = (id) => {
+    personsService.deletePerson(id).then(() => {
+      setPersons(persons.filter((person)=>person.id!==id))
+    })
+  }
   return (
     <div>
       <h2>Phonebook</h2>
@@ -56,7 +59,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm handleAdd={handleAdd} handleNewName={handleNewName} newName={newName} newPhone={newPhone} handleNewPhone={handleNewPhone} />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons personsToShow={personsToShow} handleDelete={handleDelete}/>
     </div>
   );
 };
