@@ -1,4 +1,25 @@
 {
-  "persons": [],
+  "persons": [
+    {
+      "name": "Aryan",
+      "number": "6564654564",
+      "id": "8O40i-2OTXY"
+    },
+    {
+      "name": "Aryan Tomar",
+      "number": "989898999",
+      "id": "1Yey47uYK4E"
+    },
+    {
+      "name": "kaise ho",
+      "number": "45454564654",
+      "id": "nO1haun1_f8"
+    },
+    {
+      "name": "hvhh",
+      "number": "654454",
+      "id": "BQGPL8Kzd_8"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }
