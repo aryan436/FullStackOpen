@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
 import Note from "./components/Note";
-import axios from "axios";
 import noteService from "./services/notes";
+import Notification from "./components/Notification";
+import Footer from "./components/Footer";
 const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("a new note...");
   const [showAll, setShowAll] = useState(false);
+  const [errorMessage, setErrorMeassage] = useState("some error happened...");
+  const fakeNote = { id: "1000000", content: "Fake Note", important: true };
   useEffect(() => {
-    noteService.getAll().then(initialNotes => {
+    noteService.getAll().then((initialNotes) => {
       setNotes(initialNotes);
     });
   }, []);
+  
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
@@ -20,7 +24,7 @@ const App = () => {
       content: newNote,
       important: Math.random() < 0.5,
     };
-    noteService.create(noteObject).then(returnedNote => {
+    noteService.create(noteObject).then((returnedNote) => {
       setNotes(notes.concat(returnedNote));
       setNewNote("");
     });
@@ -42,13 +46,17 @@ const App = () => {
         setNotes(notes.map((note) => (note.id === id ? returnedNote : note)));
       })
       .catch((error) => {
-        alert(`the note '${note.content}' was already deleted from server`);
+        setErrorMeassage(`Note '${note.content}' was already removed from the server`)
+        setTimeout(() => {
+          setErrorMeassage(null)
+        },5000)
         setNotes(notes.filter((n) => n.id !== id));
       });
   };
   return (
     <div>
       <h1>Notes</h1>
+      <Notification message={errorMessage} />
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? "important" : "all"}
@@ -67,6 +75,7 @@ const App = () => {
         <input value={newNote} onChange={handleNoteChange} />
         <button type="submit">save</button>
       </form>
+      <Footer />
     </div>
   );
 };
