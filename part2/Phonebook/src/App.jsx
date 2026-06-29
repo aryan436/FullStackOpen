@@ -16,17 +16,28 @@ const App = () => {
   },[])
   const handleAdd = (event) => {
     event.preventDefault();
-    const exists = persons.some((person) => person.name === newName)
-    if (exists) {
-      alert(`${newName} is already added to phonebook`);
-      return;
-    }
     const newPerson = {
       name: newName,
       number: newPhone,
     };
+    const existingPerson = persons.find((person) => person.name === newName)
+    if (existingPerson) {
+      if (window.confirm(`${existingPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
+        personsService
+          .updatePerson(existingPerson.id, newPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id === existingPerson.id ? returnedPerson : person,
+              ),
+            );
+            setNewName('')
+            setNewPhone('')
+          });
+      }
+      return
+    }
     personsService.create(newPerson).then(returnedPerson => {
-      console.log(returnedPerson);
       setPersons(persons.concat(returnedPerson));
       setNewName("")
       setNewPhone("")
@@ -34,17 +45,14 @@ const App = () => {
   };
   const handleNewName = (event) => {
     setNewName(event.target.value);
-    console.log(event.target.value);
   };
   const handleNewPhone = (event) => {
     setNewPhone(event.target.value);
-    console.log(event.target.value)
   }
   const personsToShow = persons.filter((person) =>
     person.name.toLowerCase().includes(filter.toLowerCase()),
   );
   const handleFilter = (event) => {
-    console.log(event.target.value)
     setFilter(event.target.value)
   }
   const handleDelete = (id) => {
