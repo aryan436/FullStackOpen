@@ -13,7 +13,6 @@ const App = () => {
     axios
       .get("http://localhost:3001/persons")
       .then((response) => {
-        console.log(response)
         setPersons(response.data)
       })
   },[])
@@ -27,11 +26,13 @@ const App = () => {
     const newPerson = {
       name: newName,
       number: newPhone,
-      id:persons.length+1
     };
-    setPersons(persons.concat(newPerson));
-    setNewName("")
-    setNewPhone("")
+    axios.post("http://localhost:3001/persons", newPerson).then((response) => {
+      console.log(response.data);
+      setPersons(persons.concat(response.data));
+      setNewName("")
+      setNewPhone("")
+    })
   };
   const handleNewName = (event) => {
     setNewName(event.target.value);
