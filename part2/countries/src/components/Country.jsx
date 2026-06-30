@@ -1,5 +1,4 @@
-const Country = ({ country, detailed }) => {
-    console.log(Object.values(country.languages));
+const Country = ({ country, detailed ,handleShow}) => {
     if (detailed) {
         return <>
             <h1>{country.name.common}</h1>
@@ -13,7 +12,14 @@ const Country = ({ country, detailed }) => {
         </>
     }
     else {
-        return <p>{ country.name.common}</p>
+        return (
+         
+            <div>
+              {country.name.common} <button onClick={()=>handleShow(country)}>show</button>
+            </div>
+            
+        
+        );
     }
 }
 export default Country
