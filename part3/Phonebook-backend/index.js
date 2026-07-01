@@ -1,9 +1,15 @@
 const express = require("express");
-const morgan = require('morgan')
+const morgan = require("morgan");
+const cors = require("cors");
 const app = express();
 app.use(express.json());
-morgan.token("body", (req, res) =>JSON.stringify(req.body));
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body '))
+app.use(cors());
+morgan.token("body", (req, res) => JSON.stringify(req.body));
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :body ",
+  ),
+);
 let persons = [
   {
     id: "1",
@@ -32,14 +38,13 @@ app.get("/info", (req, res) => {
   );
 });
 app.get("/api/persons", (req, res) => {
-  console.log(req)
-  res.status(200).send(persons);
+  res.send(persons);
 });
 app.get("/api/persons/:id", (req, res) => {
   const id = req.params.id;
   const person = persons.find((person) => person.id === id);
   if (person) {
-    res.status(200).json(person);
+    res.json(person);
   } else {
     res.status(404).end();
   }
@@ -54,10 +59,9 @@ const getId = () => {
 };
 app.post("/api/persons", (req, res) => {
   const body = req.body;
-  console.log(body);
   if (!(body.number && body.name)) {
     return res.status(400).json({ error: "Name or Number is missing" });
-    }
+  }
   if (persons.find((person) => person.name === body.name)) {
     return res.status(400).json({ error: "person already exists" });
   }
@@ -74,7 +78,8 @@ const unknownEndpoint = (request, response) => {
 };
 
 app.use(unknownEndpoint);
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
 });
