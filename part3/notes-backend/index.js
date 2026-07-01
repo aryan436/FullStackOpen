@@ -1,4 +1,7 @@
+require("dotenv").config();
 const express = require('express')
+const Note = require("./models/note");
+
 const app = express()
 app.use(express.json());
 let notes = [
@@ -18,21 +21,23 @@ let notes = [
     important: true
     }
 ]
+if (process.argv.length < 3) {
+    console.log("give password as argument");
+    process.exit(1);
+}
+
 app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
 })
 app.get('/api/notes', (req, res) => {
-    res.json(notes);
+  Note.find({}).then(notes => {
+      res.json(notes)
+    })
 })
 app.get("/api/notes/:id", (request, response) => {
-  const id = request.params.id;
-  const note = notes.find((note) => note.id === id);
- 
-    if (note) {
-   response.json(note);
- } else {
-   response.status(404).end();
- }
+  Note.findById(req.params.id).then(note => {
+    res.json(note)
+  })
 });
 app.delete("/api/notes/:id", (request, response) => {
   const id = request.params.id;
@@ -40,9 +45,7 @@ app.delete("/api/notes/:id", (request, response) => {
 
   response.status(204).end();
 });
-const generateId = () => {
-    return String(Math.max(...notes.map((n)=>Number(n.id)))+1)
-}
+
 app.post("/api/notes", (request, response) => {
   const body = request.body;
   if (!body.content) {
@@ -50,13 +53,13 @@ app.post("/api/notes", (request, response) => {
       error: 'content missing'
     })
   }
-  const note = {
-    id:generateId(),
+  const note = new Note({
+    content: body.content,
     important:  body.important||false,
-    content: body.content
-  }
-  notes = notes.concat(note);
-  response.status(201).json(note);
+  })
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  })
 });
 console.log();
 const PORT = 3001
