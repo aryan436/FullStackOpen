@@ -21,11 +21,6 @@ let notes = [
     important: true
     }
 ]
-if (process.argv.length < 3) {
-    console.log("give password as argument");
-    process.exit(1);
-}
-
 app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
 })
